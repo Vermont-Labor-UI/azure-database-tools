@@ -11,6 +11,7 @@ $database = Get-AzureRmSqlDatabase  -ResourceGroupName $resourceGroup `
 
 if (-Not $database.ElasticPoolName) {
     Write-Host "Cannot detect ElasticPool failing build"
+    exit 1
 }
 Remove-AzureRmSqlDatabase -ResourceGroupName $resourceGroup `
     -ServerName $databaseServer `
