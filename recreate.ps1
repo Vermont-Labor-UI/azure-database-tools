@@ -2,8 +2,7 @@ function Clear-Database {
     param(
         [Parameter(Mandatory=$true)][string]$resourceGroup,
         [Parameter(Mandatory=$true)][string]$databaseServer,
-        [Parameter(Mandatory=$true)][string]$databaseName,
-        [Parameter][string]$elasticPoolName
+        [Parameter(Mandatory=$true)][string]$databaseName
     )
 
     Write-Host "Starting to recrate database: $databaseName on server $databaseServer"
@@ -12,10 +11,7 @@ function Clear-Database {
         -DatabaseName $databaseName `
 
     if (-Not $database.ElasticPoolName) {
-        Write-Host "Cannot detect current ElasticPool name falling back to parameter"
-        if (-Not $elasticPoolName) {
-            
-        }
+        Write-Host "Cannot detect ElasticPool failing build"
     }
     Remove-AzureRmSqlDatabase -ResourceGroupName $resourceGroup `
         -ServerName $databaseServer `
