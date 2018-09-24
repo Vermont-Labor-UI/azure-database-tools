@@ -7,7 +7,7 @@ param(
 
 if ($PSBoundParameters.ContainsKey('dacpacFilePath')){
     Write-Host "Looking for file $dacpacFilePath"
-    if (![System.IO.File]::Exists($dacpacFilePath)){
+    if ([System.IO.File]::Exists($dacpacFilePath) -eq $false){
         Write-Host "File $dacpacFilePath not found, aborting"
         exit 1
     }
