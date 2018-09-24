@@ -2,15 +2,14 @@ param(
     [Parameter(Mandatory=$true)][string]$resourceGroup,
     [Parameter(Mandatory=$true)][string]$databaseServer,
     [Parameter(Mandatory=$true)][string]$databaseName,
-    [Parameter(Mandatory=$false)][string]$dacpacFilePath
+    [Parameter(Mandatory=$true)][string]$dacpacFilePath,
+    [Parameter(Mandatory=$false)][Boolean]$skipRecreate
 )
 
-if ($PSBoundParameters.ContainsKey('dacpacFilePath')){
-    Write-Host "Looking for file $dacpacFilePath"
-    if ([System.IO.File]::Exists($dacpacFilePath) -eq $false){
-        Write-Host "File $dacpacFilePath not found, aborting"
-        exit 1
-    }
+Write-Host "Looking for file $dacpacFilePath"
+if ([System.IO.File]::Exists($dacpacFilePath) -eq $false){
+    Write-Host "File $dacpacFilePath not found, aborting"
+    exit 1
 }
 
 Write-Host "Starting to recrate database: $databaseName on server $databaseServer"
@@ -23,14 +22,19 @@ if (-Not $database.ElasticPoolName) {
     exit 1
 }
 
-Write-Host "Removing database: $databaseName on server $databaseServer"
+if ($PSBoundParameters.ContainsKey('skipRecreate')){
+    if($skipRecreate){
+        Write-Host "Skipping recreate due to presence of flag"
+        exit 0
+    }
+}
 
+Write-Host "Removing database: $databaseName on server $databaseServer"
 Remove-AzureRmSqlDatabase -ResourceGroupName $resourceGroup `
     -ServerName $databaseServer `
     -DatabaseName $databaseName
 
 Write-Host "Creating database: $databaseName on server $databaseServer"
-
 New-AzureRmSqlDatabase -ResourceGroupName $resourceGroup `
     -ServerName $databaseServer `
     -DatabaseName $databaseName `
