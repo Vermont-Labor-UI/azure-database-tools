@@ -1,8 +1,17 @@
 param(
     [Parameter(Mandatory=$true)][string]$resourceGroup,
     [Parameter(Mandatory=$true)][string]$databaseServer,
-    [Parameter(Mandatory=$true)][string]$databaseName
+    [Parameter(Mandatory=$true)][string]$databaseName,
+    [Parameter(Mandatory=$false)][string]$dacpacFilePath
 )
+
+if ($PSBoundParameters.ContainsKey('dacpacFilePath')){
+    Write-Host "Looking for file $dacpacFilePath"
+    if ([System.IO.File]::Exists($dacpacFilePath) -eq $false){
+        Write-Host "File $dacpacFilePath not found, aborting"
+        exit 1
+    }
+}
 
 Write-Host "Starting to recrate database: $databaseName on server $databaseServer"
 $database = Get-AzureRmSqlDatabase  -ResourceGroupName $resourceGroup `
